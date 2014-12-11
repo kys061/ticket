@@ -136,3 +136,22 @@
 		<?php } ?>
 	</div>
 </div>
+<div class="col-xs-12"> 
+	
+	<div class="btn-group pull-right">
+		<a href="/tmp/topic/add" class="btn btn-small">티켓작성</a>
+	</div>
+	<div>
+		<form id="bd_search" class="form-inline" method="post">
+			<select class="input-sm" name="search_sel">
+				<option value="title"><h5>제목</h5></option>
+				<option value="description">내용</option>
+				<option value="title_description">제목+내용</option>
+			</select>
+			<input type="text" name="search_word" id="q" onkeypress="board_search_enter(document.q);" />
+			<input type="button" value="Search"  id="search_btn" />
+		</form>
+	</div>
+
+
+</div>

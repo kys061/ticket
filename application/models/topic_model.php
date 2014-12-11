@@ -1,188 +1,208 @@
 <?php
 class Topic_model extends CI_Model {
- 
+
     function __construct()
     {       
         parent::__construct();
     }
- 
- 	function get_all($status){
+
+    function get_all($status){
  //		return $this->db->query('SELECT * FROM topic')->result();
- 		$stat = $status;
- 		$sql = "SELECT * FROM topic where status=".'\'$stat\'';
-   		$query = $this->db->query($sql);
- 		$result = $query->num_rows();
- 		return $result;
+       $stat = $status;
+       $sql = "SELECT * FROM topic where status=".'\'$stat\'';
+       $query = $this->db->query($sql);
+       $result = $query->num_rows();
+       return $result;
 
- 	}
+   }
 
- 	function get_list_open($table='topic', $type='', $offset='', $limit='')
-    {
-		$limit_query = '';
-		$table='topic';
-		$status='\'open\'';
+   function get_list_open($table='topic', $type='', $offset='', $limit='')
+   {
+      $limit_query = '';
+      $table='topic';
+      $status='\'open\'';
 
-    	if ( $limit != '' OR $offset != '' )
-     	{
+      if ( $limit != '' OR $offset != '' )
+      {
      		//페이징이 있을 경우의 처리
-     		$limit_query = ' LIMIT '.$offset.', '.$limit;
-     	}
+       $limit_query = ' LIMIT '.$offset.', '.$limit;
+   }
 
-    	$sql = "SELECT * FROM ".$table." where status=".$status." ORDER BY id DESC".$limit_query;
-   		$query = $this->db->query($sql);
+   $sql = "SELECT * FROM ".$table." where status=".$status." ORDER BY id DESC".$limit_query;
+   $query = $this->db->query($sql);
 
-		if ( $type == 'count' )
-     	{
+   if ( $type == 'count' )
+   {
      		//리스트를 반환하는 것이 아니라 전체 게시물의 갯수를 반환
 	    //	$result = $query->num_rows();
-     		$result = $query->result();
+       $result = $query->result();
 
 	    	//$this->db->count_all($table);
-     	}
-     	else
-     	{
+   }
+   else
+   {
      		//게시물 리스트 반환
-	    	$result = $query->result();
-     	}
+      $result = $query->result();
+  }
 
-    	return $result;
-    }
+  return $result;
+}
 
-    function get_list_hold($table='topic', $type='', $offset='', $limit='')
-    {
-		$limit_query = '';
-		$table='topic';
-		$status='\'hold\'';
+function get_list_hold($table='topic', $type='', $offset='', $limit='')
+{
+  $limit_query = '';
+  $table='topic';
+  $status='\'hold\'';
 
-    	if ( $limit != '' OR $offset != '' )
-     	{
+  if ( $limit != '' OR $offset != '' )
+  {
      		//페이징이 있을 경우의 처리
-     		$limit_query = ' LIMIT '.$offset.', '.$limit;
-     	}
+   $limit_query = ' LIMIT '.$offset.', '.$limit;
+}
 
-    	$sql = "SELECT * FROM ".$table." where status=".$status." ORDER BY id DESC".$limit_query;
-   		$query = $this->db->query($sql);
+$sql = "SELECT * FROM ".$table." where status=".$status." ORDER BY id DESC".$limit_query;
+$query = $this->db->query($sql);
 
-		if ( $type == 'count' )
-     	{
+if ( $type == 'count' )
+{
      		//리스트를 반환하는 것이 아니라 전체 게시물의 갯수를 반환
-	    	$result = $query->result();
+  $result = $query->result();
 
 	    	//$this->db->count_all($table);
-     	}
-     	else
-     	{
+}
+else
+{
      		//게시물 리스트 반환
-	    	$result = $query->result();
-     	}
+  $result = $query->result();
+}
 
-    	return $result;
+return $result;
+}
+
+function get_list_close($table='topic', $type='', $offset='', $limit='', $search_word='', $search_sel)
+{
+  $sword='';
+  $status='\'close\'';
+
+  if( $search_word != '' ){
+    if ( $search_sel != ''){
+        if( $search_sel == 'title')
+        {
+            $sword = ' WHERE title like "%'.$search_word.'%" and status='.$status.'';
+        }
+        if( $search_sel == 'description')
+        {
+            $sword = ' WHERE description like "%'.$search_word.'%" and status='.$status.'';
+        }
+        if( $search_sel == 'title_description')
+        {
+            $sword = ' WHERE title like "%'.$search_word.'%" or description like "%'.$search_word.'%" and status='.$status.'';
+        }
     }
-    
-    function get_list_close($table='topic', $type='', $offset='', $limit='')
-    {
-		$limit_query = '';
-		$table='topic';
-		$status='\'close\'';
+}
 
-    	if ( $limit != '' OR $offset != '' )
-     	{
+$limit_query = '';
+$table='topic';
+
+if ( $limit != '' OR $offset != '' )
+{
+            //페이징이 있을 경우의 처리
+    $limit_query = ' LIMIT '.$offset.', '.$limit;
+}
+
+$sql = "SELECT * FROM ".$table.$sword." ORDER BY id DESC".$limit_query;
+$query = $this->db->query($sql);
+
+if ( $type == 'count' )
+{
+            //리스트를 반환하는 것이 아니라 전체 게시물의 갯수를 반환
+    $result = $query->num_rows();
+
+            //$this->db->count_all($table);
+}
+else
+{
+            //게시물 리스트 반환
+    $result = $query->result();
+}
+
+return $result;
+}
+
+function get_list($table='topic', $type='', $offset='', $limit='')
+{
+  $limit_query = '';
+  $table='topic';
+
+  if ( $limit != '' OR $offset != '' )
+  {
      		//페이징이 있을 경우의 처리
-     		$limit_query = ' LIMIT '.$offset.', '.$limit;
-     	}
+   $limit_query = ' LIMIT '.$offset.', '.$limit;
+}
 
-    	$sql = "SELECT * FROM ".$table." where status=".$status." ORDER BY id DESC".$limit_query;
-   		$query = $this->db->query($sql);
+$sql = "SELECT * FROM ".$table." ORDER BY id DESC".$limit_query;
+$query = $this->db->query($sql);
 
-		if ( $type == 'count' )
-     	{
+if ( $type == 'count' )
+{
      		//리스트를 반환하는 것이 아니라 전체 게시물의 갯수를 반환
-	    	$result = $query->num_rows();
+  $result = $query->num_rows();
 
 	    	//$this->db->count_all($table);
-     	}
-     	else
-     	{
+}
+else
+{
      		//게시물 리스트 반환
-	    	$result = $query->result();
-     	}
+  $result = $query->result();
+}
 
-    	return $result;
-    }
-
-	function get_list($table='topic', $type='', $offset='', $limit='')
-    {
-		$limit_query = '';
-		$table='topic';
-
-    	if ( $limit != '' OR $offset != '' )
-     	{
-     		//페이징이 있을 경우의 처리
-     		$limit_query = ' LIMIT '.$offset.', '.$limit;
-     	}
-
-    	$sql = "SELECT * FROM ".$table." ORDER BY id DESC".$limit_query;
-   		$query = $this->db->query($sql);
-
-		if ( $type == 'count' )
-     	{
-     		//리스트를 반환하는 것이 아니라 전체 게시물의 갯수를 반환
-	    	$result = $query->num_rows();
-
-	    	//$this->db->count_all($table);
-     	}
-     	else
-     	{
-     		//게시물 리스트 반환
-	    	$result = $query->result();
-     	}
-
-    	return $result;
-    }
+return $result;
+}
+}
 		//return $this->db->query('SELECT * FROM topic')->result();
-	
-	function post($topic_id){
-		$this->db->select('id');
-		$this->db->select('title');
-		$this->db->select('status');
-		$this->db->select('description');
-		$this->db->select('UNIX_TIMESTAMP(created) AS created');
-		return $this->db->get_where('topic', array('id'=>$topic_id))->row();
+
+function post($topic_id){
+  $this->db->select('id');
+  $this->db->select('title');
+  $this->db->select('status');
+  $this->db->select('description');
+  $this->db->select('UNIX_TIMESTAMP(created) AS created');
+  return $this->db->get_where('topic', array('id'=>$topic_id))->row();
 	#	return $this->db->query('SELECT * FROM topic WHERE id='.$topic_id)
-	}
-	function add($title, $status, $cuname, $description){
-		$this->db->set('created', 'NOW()', false);
-		$this->db->insert('topic', array(
-				'title'=>$title,
-				'status'=>$status,
-				'cuname'=>$cuname,
-				'description'=>$description
+}
+function add($title, $status, $cuname, $description){
+  $this->db->set('created', 'NOW()', false);
+  $this->db->insert('topic', array(
+    'title'=>$title,
+    'status'=>$status,
+    'cuname'=>$cuname,
+    'description'=>$description
 
-			));
+    ));
 
-		return $this->db->insert_id();
-	}
-	function delete($topic_id){
+  return $this->db->insert_id();
+}
+function delete($topic_id){
 
-		$this->db->delete('topic', array(
-			'id' => $topic_id
-			)); 
+  $this->db->delete('topic', array(
+   'id' => $topic_id
+   )); 
 
-		return true;
+  return true;
 // 생성결과:
 // DELETE FROM mytable 
 // WHERE id = $id
-	}
-	function modify($id, $title, $status, $cuname, $description){
-		$this->db->set('created', 'NOW()', false);
-		$this->db->update('topic', array(
-			'title'=>$title,
-			'status'=>$status,
-			'cuname'=>$cuname,
-			'description'=>$description), array('id'=>$id));
-		$topic_id = $id;
-		return $id;
-	}
+}
+function modify($id, $title, $status, $cuname, $description){
+  $this->db->set('created', 'NOW()', false);
+  $this->db->update('topic', array(
+   'title'=>$title,
+   'status'=>$status,
+   'cuname'=>$cuname,
+   'description'=>$description), array('id'=>$id));
+  $topic_id = $id;
+  return $id;
+}
 
 }
 ?>

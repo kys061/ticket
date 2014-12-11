@@ -68,6 +68,32 @@ class MY_Controller extends CI_Controller {
 
 	function _sidebar_close(){
 		//$topics = $this->topic_model->gets();
+		//$topics = $this->topic_model->gets();
+		//$this->output->enable_profiler(TRUE);
+		echo $this->uri->uri_string();
+		echo "<br>";
+		echo $this->input->post('search_sel');
+
+		$search_sel = $this->input->post('search_sel');
+		echo "<br>";
+		echo $search_sel;
+		//검색어 초기화
+		$search_word = $page_url = '';
+		$uri_segment = 5;
+
+		//주소중에서 q(검색어) 세그먼트가 있는지 검사하기 위해 주소를 배열로 변환
+		$uri_array = $this->segment_explode($this->uri->uri_string());
+
+		if( in_array('q', $uri_array) ) {
+			//주소에 검색어가 있을 경우의 처리. 즉 검색시
+			$search_word = urldecode($this->url_explode($uri_array, 'q'));
+		//	echo $this->url_explode($uri_array, 'q');
+
+			//페이지네이션용 주소
+			$page_url = '/q/'.$search_word;
+			$uri_segment = 7;
+		}
+
 		$this->load->library('pagination');
 		$config['base_url'] = 'http://localhost/topic/tlist/';
 		//$config['total_rows'] = count($this->topic_model->get_all('close'));
@@ -92,7 +118,13 @@ class MY_Controller extends CI_Controller {
 
 		$this->pagination->initialize($config); 
 		$data['pagination'] = $this->pagination->create_links();
+		
+		if( in_array('q', $uri_array) ){
+		$page = $this->uri->segment($uri_segment, 1);
+		}
+		else{
 		$page = $this->uri->segment(3, 1);
+		}
 
 		if ( $page > 1)
 		{
@@ -105,7 +137,7 @@ class MY_Controller extends CI_Controller {
 
 		$limit = $config['per_page'];
 
-		$data['closeticket'] = $this->topic_model->get_list_close($this->uri->segment(3), '', $start, $limit);
+		$data['closeticket'] = $this->topic_model->get_list_close($this->uri->segment(3), '', $start, $limit, $search_word, $search_sel);
 		
 		$data['openticket'] = $this->topic_model->get_list_open($this->uri->segment(3), 'count');
 
